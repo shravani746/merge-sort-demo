@@ -1,0 +1,1197 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merge Sort Visualizer</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --navy: #14243a;
+  --text: #26364b;
+  --muted: #8491a3;
+  --line: #e5eaf0;
+  --teal: #328475;
+  --teal-light: #e4f2ee;
+  --blue: #5276bd;
+  --blue-light: #eaf0fc;
+  --orange: #d18b43;
+  --orange-light: #fbf0df;
+  --red: #cb6969;
+  --shadow: 0 8px 28px rgba(24, 42, 66, .055);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+
+button, input { font: inherit; }
+
+.topbar {
+  height: 66px;
+  background: var(--navy);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(24px, calc((100% - 1160px)/2));
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-family: Manrope, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #2c746d;
+  color: white;
+  font-size: 17px;
+}
+
+.top-tag {
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  color: #b6c7d9;
+  text-transform: uppercase;
+}
+
+main {
+  max-width: 1160px;
+  margin: auto;
+  padding: 36px 24px 60px;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+h1 {
+  margin: 0;
+  color: var(--navy);
+  font-family: Manrope, sans-serif;
+  font-size: clamp(30px, 5vw, 43px);
+  line-height: 1.15;
+  letter-spacing: -1.7px;
+}
+
+.hero p {
+  color: #778497;
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.algorithm-tag {
+  background: var(--teal-light);
+  color: #2e7468;
+  border: 1px solid #d3e9e2;
+  border-radius: 30px;
+  padding: 9px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .6px;
+  white-space: nowrap;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+}
+
+.controls {
+  padding: 22px;
+}
+
+.panel-title {
+  color: var(--navy);
+  font-family: Manrope, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 0 5px;
+}
+
+.panel-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0 0 22px;
+}
+
+.field-label {
+  display: block;
+  color: #536176;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 13px;
+  border: 1px solid #dce3eb;
+  border-radius: 9px;
+  background: #fbfcfd;
+  color: var(--navy);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  outline: none;
+  transition: border .2s, box-shadow .2s;
+}
+
+.input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(50,132,117,.1);
+}
+
+.hint {
+  color: #97a2b1;
+  font-size: 11px;
+  margin-top: 7px;
+  line-height: 1.5;
+}
+
+.btn {
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--navy);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) { background: #243d5e; }
+
+.btn-secondary {
+  background: #f0f3f6;
+  color: #43536a;
+  border: 1px solid #e4e9ef;
+}
+
+.btn-secondary:hover:not(:disabled) { background: #e6ebf1; }
+
+.btn-teal {
+  background: var(--teal-light);
+  color: #2d776b;
+  border: 1px solid #d2e8e1;
+}
+
+.btn-teal:hover:not(:disabled) { background: #d7ebe4; }
+
+.full { width: 100%; }
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.button-row .btn { flex: 1; }
+
+.section-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 23px 0;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 11px;
+}
+
+.setting-row label {
+  font-size: 12px;
+  color: #536176;
+  font-weight: 700;
+}
+
+.setting-row select {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 7px;
+  color: var(--text);
+  background: white;
+  font-size: 11px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #778497;
+  font-size: 10px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+
+.dot-unsorted { background: var(--blue); }
+.dot-split { background: var(--orange); }
+.dot-sorted { background: var(--teal); }
+
+.workspace {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.workspace-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.workspace-head h2 {
+  color: var(--navy);
+  font-family: Manrope, sans-serif;
+  font-size: 15px;
+  margin: 0;
+  font-weight: 800;
+}
+
+.step-counter {
+  color: #738195;
+  background: #f2f5f8;
+  border: 1px solid #e7ecf1;
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.stage {
+  padding: 24px 22px 18px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.status-pill {
+  padding: 5px 9px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+  background: var(--blue-light);
+  color: var(--blue);
+}
+
+.status-pill.split {
+  background: var(--orange-light);
+  color: #b9782d;
+}
+
+.status-pill.merge, .status-pill.done {
+  background: var(--teal-light);
+  color: #2d776b;
+}
+
+.status-description {
+  color: #8a96a6;
+  font-size: 11px;
+}
+
+.step-title {
+  color: var(--navy);
+  font-family: Manrope, sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 7px;
+}
+
+.step-description {
+  color: #718095;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0;
+  min-height: 40px;
+}
+
+.visual-area {
+  min-height: 250px;
+  margin-top: 22px;
+  padding: 24px 12px;
+  border: 1px solid #e9edf2;
+  border-radius: 11px;
+  background:
+    linear-gradient(to bottom, transparent 24%, #edf0f4 25%, transparent 25%),
+    linear-gradient(to bottom, transparent 49%, #edf0f4 50%, transparent 50%),
+    linear-gradient(to bottom, transparent 74%, #edf0f4 75%, transparent 75%),
+    #fbfcfd;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  overflow-x: auto;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: max-content;
+  animation: appear .25s ease;
+}
+
+.group-label {
+  color: #8390a1;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 7px;
+  min-height: 135px;
+  padding: 0 5px;
+}
+
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  width: clamp(28px, 5vw, 43px);
+}
+
+.bar {
+  width: 100%;
+  min-height: 15px;
+  border-radius: 6px 6px 3px 3px;
+  background: var(--blue);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 7px;
+  color: white;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  transition: height .3s ease, background .25s ease;
+  box-shadow: 0 3px 8px rgba(82,118,189,.14);
+}
+
+.bar.split {
+  background: var(--orange);
+  box-shadow: 0 3px 8px rgba(209,139,67,.14);
+}
+
+.bar.sorted {
+  background: var(--teal);
+  box-shadow: 0 3px 8px rgba(50,132,117,.14);
+}
+
+.index {
+  color: #99a4b2;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+}
+
+.group-set {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.merge-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.merge-arrow {
+  color: #90a0ad;
+  font-size: 17px;
+}
+
+.progress-track {
+  height: 4px;
+  background: #edf0f4;
+  margin: 0 22px 19px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--teal);
+  border-radius: 20px;
+  transition: width .25s ease;
+}
+
+.playback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 20px 21px;
+}
+
+.playback .btn {
+  min-width: 82px;
+}
+
+.play-button {
+  min-width: 105px !important;
+}
+
+.playback .icon-btn {
+  min-width: 40px;
+  padding: 11px;
+  font-size: 14px;
+}
+
+.result-panel {
+  margin-top: 22px;
+  padding: 19px 22px;
+}
+
+.result-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.result-head h3 {
+  font-family: Manrope, sans-serif;
+  font-size: 14px;
+  color: var(--navy);
+  margin: 0;
+}
+
+.result-label {
+  color: #8793a2;
+  font-size: 10px;
+}
+
+.result-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.result-chip {
+  min-width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  background: #f0f6f3;
+  color: #347767;
+  border: 1px solid #dcece5;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.metric {
+  background: white;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  border-radius: 12px;
+  padding: 17px;
+}
+
+.metric-label {
+  color: #8491a3;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  color: var(--navy);
+  font-family: Manrope, sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  margin-top: 6px;
+}
+
+.metric-note {
+  color: #9aa5b2;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.info-card {
+  background: #edf3f1;
+  border: 1px solid #dce9e4;
+  border-radius: 11px;
+  padding: 17px 19px;
+  margin-top: 22px;
+}
+
+.info-card h3 {
+  margin: 0 0 6px;
+  color: #315f54;
+  font-family: Manrope, sans-serif;
+  font-size: 13px;
+}
+
+.info-card p {
+  color: #62776f;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.error {
+  display: none;
+  color: #b94b4b;
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+.error.show { display: block; }
+
+.footer {
+  text-align: center;
+  color: #98a2ae;
+  font-size: 11px;
+  padding: 30px 10px 0;
+}
+
+@keyframes appear {
+  from { opacity: .45; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  .hero { align-items: flex-start; flex-direction: column; }
+  .controls { padding: 19px; }
+  .workspace-head { padding: 17px; }
+  .stage { padding: 19px 14px; }
+  .visual-area { min-height: 220px; }
+}
+
+@media(max-width: 480px) {
+  main { padding: 25px 13px 40px; }
+  .topbar { padding: 0 15px; }
+  .top-tag { font-size: 9px; }
+  .metrics { gap: 7px; }
+  .metric { padding: 12px 9px; }
+  .metric-value { font-size: 18px; }
+  .metric-label { font-size: 9px; }
+  .playback { gap: 5px; padding-left: 7px; padding-right: 7px; }
+  .playback .btn { min-width: 65px; padding: 10px 7px; }
+  .playback .play-button { min-width: 86px !important; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">↗</div>
+    <span>Algo<span style="color:#8dc1b3">Lab</span></span>
+  </div>
+  <div class="top-tag">DAA · Interactive Learning</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">DESIGN AND ANALYSIS OF ALGORITHMS</div>
+      <h1>Merge Sort Visualizer</h1>
+      <p>Explore the Divide and Conquer strategy, one step at a time.</p>
+    </div>
+    <div class="algorithm-tag">DIVIDE &amp; CONQUER</div>
+  </section>
+
+  <div class="layout">
+
+    <!-- LEFT CONTROLS -->
+    <aside class="panel controls">
+      <h2 class="panel-title">Input Configuration</h2>
+      <p class="panel-subtitle">Customize your array and control the sorting process.</p>
+
+      <label class="field-label" for="arrayInput">Array elements</label>
+      <input class="input" id="arrayInput" value="8, 3, 5, 1, 9, 2, 7, 4"
+             placeholder="e.g. 8, 3, 5, 1">
+      <div class="hint">Enter up to 16 numbers, separated by commas.</div>
+      <div class="error" id="error"></div>
+
+      <div class="button-row">
+        <button class="btn btn-primary full" id="applyBtn">Apply Array</button>
+        <button class="btn btn-secondary" id="randomBtn">↻ Random</button>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="setting-row">
+        <label for="speedSelect">Animation speed</label>
+        <select id="speedSelect">
+          <option value="1200">Slow</option>
+          <option value="700" selected>Normal</option>
+          <option value="300">Fast</option>
+        </select>
+      </div>
+
+      <button class="btn btn-teal full" id="startBtn">▶ Start Visualization</button>
+
+      <div class="section-divider"></div>
+
+      <h2 class="panel-title">How it works</h2>
+      <p class="panel-subtitle" style="margin-bottom:12px;">Merge Sort follows three fundamental stages.</p>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;margin:13px 0;">
+        <div style="width:27px;height:27px;flex-shrink:0;display:grid;place-items:center;background:#fbf0df;color:#b9782d;border-radius:7px;font-size:11px;font-weight:800;">01</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#344256;">Divide</div>
+          <div style="font-size:11px;color:#8995a4;line-height:1.5;">Split the array into smaller subarrays.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;margin:13px 0;">
+        <div style="width:27px;height:27px;flex-shrink:0;display:grid;place-items:center;background:#eaf0fc;color:#5276bd;border-radius:7px;font-size:11px;font-weight:800;">02</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#344256;">Conquer</div>
+          <div style="font-size:11px;color:#8995a4;line-height:1.5;">Sort each subarray recursively.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;margin:13px 0;">
+        <div style="width:27px;height:27px;flex-shrink:0;display:grid;place-items:center;background:#e4f2ee;color:#328475;border-radius:7px;font-size:11px;font-weight:800;">03</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#344256;">Combine</div>
+          <div style="font-size:11px;color:#8995a4;line-height:1.5;">Merge sorted subarrays into one sorted array.</div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+      <div class="legend">
+        <div class="legend-item"><span class="dot dot-unsorted"></span> Original</div>
+        <div class="legend-item"><span class="dot dot-split"></span> Dividing</div>
+        <div class="legend-item"><span class="dot dot-sorted"></span> Sorted</div>
+      </div>
+    </aside>
+
+    <!-- RIGHT VISUALIZER -->
+    <section>
+      <div class="panel workspace">
+        <div class="workspace-head">
+          <h2>Sorting Workspace</h2>
+          <span class="step-counter" id="stepCounter">STEP 1 / 1</span>
+        </div>
+
+        <div class="stage">
+          <div class="status-row">
+            <span class="status-pill" id="statusPill">READY</span>
+            <span class="status-description" id="statusDescription">Waiting to start</span>
+          </div>
+
+          <h3 class="step-title" id="stepTitle">Your array is ready</h3>
+          <p class="step-description" id="stepDescription">
+            Click Start Visualization to see how Merge Sort works.
+          </p>
+
+          <div class="visual-area" id="visualArea"></div>
+        </div>
+
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="playback">
+          <button class="btn btn-secondary icon-btn" id="prevBtn" title="Previous step" disabled>◀</button>
+          <button class="btn btn-primary play-button" id="playBtn">▶ Play</button>
+          <button class="btn btn-secondary icon-btn" id="nextBtn" title="Next step" disabled>▶</button>
+          <button class="btn btn-secondary" id="restartBtn" disabled>↺ Restart</button>
+        </div>
+      </div>
+
+      <div class="panel result-panel">
+        <div class="result-head">
+          <h3>Sorted Output</h3>
+          <span class="result-label" id="resultLabel">Appears when sorting completes</span>
+        </div>
+        <div class="result-values" id="resultValues">
+          <span style="font-size:12px;color:#9aa5b2;">Your sorted array will appear here.</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Time Complexity</div>
+      <div class="metric-value">O(n log n)</div>
+      <div class="metric-note">Best, average and worst case</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Space Complexity</div>
+      <div class="metric-value">O(n)</div>
+      <div class="metric-note">Auxiliary memory</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Array Size</div>
+      <div class="metric-value" id="arraySize">8</div>
+      <div class="metric-note">Number of elements</div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <h3>Understanding the algorithm</h3>
+    <p>
+      Merge Sort repeatedly divides an array into two halves until each subarray
+      contains one element. These subarrays are then merged in sorted order.
+      Its predictable O(n log n) time complexity makes it useful for sorting
+      large datasets.
+    </p>
+  </div>
+
+  <div class="footer">
+    ALGO LAB &nbsp;·&nbsp; DESIGN AND ANALYSIS OF ALGORITHMS
+  </div>
+</main>
+
+<script>
+const input = document.getElementById("arrayInput");
+const errorBox = document.getElementById("error");
+const visualArea = document.getElementById("visualArea");
+const stepCounter = document.getElementById("stepCounter");
+const statusPill = document.getElementById("statusPill");
+const statusDescription = document.getElementById("statusDescription");
+const stepTitle = document.getElementById("stepTitle");
+const stepDescription = document.getElementById("stepDescription");
+const progressFill = document.getElementById("progressFill");
+const resultValues = document.getElementById("resultValues");
+const resultLabel = document.getElementById("resultLabel");
+const arraySize = document.getElementById("arraySize");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const playBtn = document.getElementById("playBtn");
+const restartBtn = document.getElementById("restartBtn");
+const speedSelect = document.getElementById("speedSelect");
+
+let original = [8, 3, 5, 1, 9, 2, 7, 4];
+let steps = [];
+let currentStep = 0;
+let timer = null;
+let isPlaying = false;
+
+function parseInput() {
+  const raw = input.value.trim();
+  if (!raw) return null;
+
+  const parts = raw.split(",").map(x => x.trim());
+  if (parts.some(x => x === "")) return null;
+
+  const nums = parts.map(Number);
+  if (nums.some(x => !Number.isFinite(x))) return null;
+  if (nums.length > 16) return null;
+
+  return nums;
+}
+
+function stopPlaying() {
+  if (timer !== null) {
+    clearInterval(timer);
+    timer = null;
+  }
+  isPlaying = false;
+  playBtn.textContent = "▶ Play";
+}
+
+function makeSteps(arr) {
+  const timeline = [{
+    type: "ready",
+    title: "Your array is ready",
+    description: "The unsorted array is ready. Start the visualization to divide it into smaller subarrays.",
+    groups: [{ label: "Original Array", values: arr.slice(), color: "original" }]
+  }];
+
+  function mergeSort(part) {
+    if (part.length <= 1) return part.slice();
+
+    const mid = Math.floor(part.length / 2);
+    const leftPart = part.slice(0, mid);
+    const rightPart = part.slice(mid);
+
+    timeline.push({
+      type: "split",
+      title: "Divide the array",
+      description: `Split [${part.join(", ")}] into two smaller subarrays: [${leftPart.join(", ")}] and [${rightPart.join(", ")}].`,
+      groups: [
+        { label: "Left Subarray", values: leftPart.slice(), color: "split" },
+        { label: "Right Subarray", values: rightPart.slice(), color: "split" }
+      ]
+    });
+
+    const left = mergeSort(leftPart);
+    const right = mergeSort(rightPart);
+
+    const merged = [];
+    let i = 0;
+    let j = 0;
+
+    while (i < left.length && j < right.length) {
+      if (left[i] <= right[j]) {
+        merged.push(left[i]);
+        i++;
+      } else {
+        merged.push(right[j]);
+        j++;
+      }
+    }
+
+    while (i < left.length) {
+      merged.push(left[i]);
+      i++;
+    }
+
+    while (j < right.length) {
+      merged.push(right[j]);
+      j++;
+    }
+
+    timeline.push({
+      type: "merge",
+      title: "Merge in sorted order",
+      description: `Merge [${left.join(", ")}] and [${right.join(", ")}] to form [${merged.join(", ")}].`,
+      groups: [
+        { label: "Sorted Left", values: left.slice(), color: "original" },
+        { label: "Sorted Right", values: right.slice(), color: "original" },
+        { label: "Merged Result", values: merged.slice(), color: "sorted" }
+      ]
+    });
+
+    return merged;
+  }
+
+  const sorted = mergeSort(arr);
+
+  timeline.push({
+    type: "done",
+    title: "Sorting completed!",
+    description: `The entire array is now sorted: [${sorted.join(", ")}].`,
+    groups: [{ label: "Final Sorted Array", values: sorted.slice(), color: "sorted" }]
+  });
+
+  return timeline;
+}
+
+function renderGroup(group) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "group";
+
+  const label = document.createElement("div");
+  label.className = "group-label";
+  label.textContent = group.label;
+  wrapper.appendChild(label);
+
+  const bars = document.createElement("div");
+  bars.className = "bars";
+
+  const maxValue = Math.max(1, ...group.values.map(v => Math.abs(v)));
+
+  group.values.forEach((value, index) => {
+    const item = document.createElement("div");
+    item.className = "bar-item";
+
+    const bar = document.createElement("div");
+    bar.className = "bar";
+
+    if (group.color === "split") bar.classList.add("split");
+    if (group.color === "sorted") bar.classList.add("sorted");
+
+    const height = 32 + (Math.abs(value) / maxValue) * 82;
+    bar.style.height = height + "px";
+    bar.textContent = value;
+
+    const indexLabel = document.createElement("div");
+    indexLabel.className = "index";
+    indexLabel.textContent = index;
+
+    item.appendChild(bar);
+    item.appendChild(indexLabel);
+    bars.appendChild(item);
+  });
+
+  wrapper.appendChild(bars);
+  return wrapper;
+}
+
+function renderStep() {
+  const step = steps[currentStep];
+  if (!step) return;
+
+  visualArea.innerHTML = "";
+
+  if (step.groups.length === 1) {
+    visualArea.appendChild(renderGroup(step.groups[0]));
+  } else {
+    const set = document.createElement("div");
+    set.className = "group-set";
+
+    step.groups.forEach((group, index) => {
+      if (step.type === "merge" && index === 2) {
+        const arrow = document.createElement("div");
+        arrow.className = "merge-arrow";
+        arrow.textContent = "→";
+        set.appendChild(arrow);
+      }
+      set.appendChild(renderGroup(group));
+    });
+
+    visualArea.appendChild(set);
+  }
+
+  statusPill.className = "status-pill";
+  if (step.type === "split") statusPill.classList.add("split");
+  if (step.type === "merge") statusPill.classList.add("merge");
+  if (step.type === "done") statusPill.classList.add("done");
+
+  const labels = {
+    ready: "READY",
+    split: "DIVIDE",
+    merge: "MERGE",
+    done: "COMPLETE"
+  };
+
+  statusPill.textContent = labels[step.type];
+  statusDescription.textContent = {
+    ready: "Initial state",
+    split: "Breaking into smaller parts",
+    merge: "Combining sorted subarrays",
+    done: "All elements are sorted"
+  }[step.type];
+
+  stepTitle.textContent = step.title;
+  stepDescription.textContent = step.description;
+  stepCounter.textContent = `STEP ${currentStep + 1} / ${steps.length}`;
+
+  const progress = steps.length <= 1 ? 100 : (currentStep / (steps.length - 1)) * 100;
+  progressFill.style.width = progress + "%";
+
+  prevBtn.disabled = currentStep === 0;
+  nextBtn.disabled = currentStep === steps.length - 1;
+  restartBtn.disabled = currentStep === 0 && !isPlaying;
+
+  if (step.type === "done") {
+    showResult(step.groups[0].values);
+  } else {
+    resultValues.innerHTML = '<span style="font-size:12px;color:#9aa5b2;">Your sorted array will appear here.</span>';
+    resultLabel.textContent = "Appears when sorting completes";
+  }
+}
+
+function showResult(arr) {
+  resultValues.innerHTML = "";
+  arr.forEach(value => {
+    const chip = document.createElement("div");
+    chip.className = "result-chip";
+    chip.textContent = value;
+    resultValues.appendChild(chip);
+  });
+  resultLabel.textContent = "Sorted successfully";
+}
+
+function applyArray() {
+  stopPlaying();
+  const parsed = parseInput();
+
+  if (!parsed) {
+    errorBox.textContent = "Please enter valid numbers separated by commas (maximum 16 elements).";
+    errorBox.classList.add("show");
+    return;
+  }
+
+  errorBox.classList.remove("show");
+  original = parsed;
+  steps = makeSteps(original);
+  currentStep = 0;
+  arraySize.textContent = original.length;
+  renderStep();
+}
+
+function nextStep() {
+  if (currentStep < steps.length - 1) {
+    currentStep++;
+    renderStep();
+  } else {
+    stopPlaying();
+  }
+}
+
+function previousStep() {
+  stopPlaying();
+  if (currentStep > 0) {
+    currentStep--;
+    renderStep();
+  }
+}
+
+function startPlaying() {
+  if (currentStep >= steps.length - 1) {
+    currentStep = 0;
+    renderStep();
+  }
+
+  if (isPlaying) {
+    stopPlaying();
+    return;
+  }
+
+  isPlaying = true;
+  playBtn.textContent = "Ⅱ Pause";
+  restartBtn.disabled = false;
+
+  timer = setInterval(() => {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      renderStep();
+    } else {
+      stopPlaying();
+      renderStep();
+    }
+  }, Number(speedSelect.value));
+}
+
+function restart() {
+  stopPlaying();
+  currentStep = 0;
+  renderStep();
+}
+
+function randomArray() {
+  stopPlaying();
+  const length = Math.floor(Math.random() * 6) + 5;
+  const nums = [];
+
+  while (nums.length < length) {
+    const n = Math.floor(Math.random() * 90) + 1;
+    if (!nums.includes(n)) nums.push(n);
+  }
+
+  input.value = nums.join(", ");
+  applyArray();
+}
+
+document.getElementById("applyBtn").addEventListener("click", applyArray);
+document.getElementById("randomBtn").addEventListener("click", randomArray);
+document.getElementById("startBtn").addEventListener("click", () => {
+  applyArray();
+  if (!errorBox.classList.contains("show")) startPlaying();
+});
+prevBtn.addEventListener("click", previousStep);
+nextBtn.addEventListener("click", () => {
+  stopPlaying();
+  nextStep();
+});
+playBtn.addEventListener("click", startPlaying);
+restartBtn.addEventListener("click", restart);
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") applyArray();
+});
+
+speedSelect.addEventListener("change", () => {
+  if (isPlaying) {
+    stopPlaying();
+    startPlaying();
+  }
+});
+
+steps = makeSteps(original);
+renderStep();
+</script>
+
+</body>
+</html>
